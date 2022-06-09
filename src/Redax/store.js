@@ -1,10 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import contacts from "./contacts";
+import { combineReducers } from "redux";
+import contactsReducer from "./contacts";
 
-export  const store = configureStore({
-    reducer:{
-        contacts,
-    },
+const rootReducer = combineReducers({
+    contacts:contactsReducer,
+});
+
+const store = configureStore({
+    reducer: rootReducer,
 })
 
-
+export default store;

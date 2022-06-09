@@ -9,9 +9,9 @@ import { nanoid } from 'nanoid';
   
 function App() {
   const dispatch = useDispatch();
-  const contacts = useSelector((state) => state.contacts.items);
-  const filter = useSelector((state) => state.contacts.filter);
-
+  const contacts = useSelector((state) => state.contacts.contacts.items);
+  const filter = useSelector((state) => state.contacts.contacts.filter);
+  
   const addContact = state => {
     const contact = {
       id: nanoid(),
@@ -24,12 +24,11 @@ function App() {
       alert(`${state.name} is already in contacts`);
     } else {
       dispatch(contactAdd(contact));
-      console.log(contacts)
+      
     }
     
   }
   
-
   const deleteContact = contactId => {
     dispatch(contactDelete(contactId));
     
@@ -39,11 +38,12 @@ function App() {
     dispatch(setFilterContacts(e.currentTarget.value));
     
   }
-  
-  // const normalizedFilter = filter.toLowerCase();
-  // const visibleContact = contacts.filter(contact =>
-  //     contact.name.toLowerCase().includes(normalizedFilter)
-  // );
+
+    
+  const normalizedFilter = filter.toLowerCase();
+  const visibleContact = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+  );
     
   return (
       <div>
@@ -51,9 +51,9 @@ function App() {
         <FormAddContact onSubmit={addContact}/>
         
         <h2>Contacts</h2>
-        <Filter value={filter} onChange={ changeFilter}/>
+        <Filter value={filter} onChange={changeFilter}/>
         {contacts && <ContactList
-          contacts={contacts}
+          contacts={visibleContact}
           onDeleteContact={deleteContact}
         />}
       </div>
