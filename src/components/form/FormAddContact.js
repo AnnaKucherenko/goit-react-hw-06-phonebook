@@ -1,30 +1,61 @@
-import React, { Component } from 'react';
-import styles from './FormAddContact.module.css'
+import React from 'react';
+import { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { contactAdd} from '../../Redax/contacts';
+import { nanoid } from 'nanoid';
+import styles from './FormAddContact.module.css';
 
-class FormAddContact extends Component {
-    state = {
-        name: '',
-        number: ''
-    };
 
-    handleChange = (event) => {
+
+export default function FormAddContact (){
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
+    
+    const contacts = useSelector((state) => state.contacts.contacts.items);
+    const dispatch = useDispatch();
+
+    const addContact = () => {
+        const contact = {
+          id: nanoid(),
+          name: name,
+          number: number,
+        }
+        const contactsArrey = contacts;
+        console.log(contacts)
+
+        const isFindContact = contactsArrey.find(contact=>contact.name===name);
+        if (isFindContact) {
+          alert(`${name} is already in contacts`);
+        } else {
+          dispatch(contactAdd(contact));
+        }
+        
+    }
+
+    const handleChange = (event) => {
         const { name, value } = event.currentTarget;
-        this.setState({ [name]: value });
+        if(name==='name'){
+           setName(value);  
+        }
+        if(name==='number'){
+           setNumber(value); 
+        }
     };
 
-    handleSubmit = (e)=>{
+    const handleSubmit = (e)=>{
         e.preventDefault();
-        this.props.onSubmit(this.state);
-        this.reset();
+        addContact();
+        reset();
     }
 
-    reset = () => {
-        this.setState({ name: '', number: '' });
+    const reset = () => {
+        setName('');
+        setNumber('');
     }
 
-    render() {
+   
         return (
-            <form  onSubmit={this.handleSubmit}>
+            <form  onSubmit={handleSubmit}>
                 <div className={styles.formContact} >
                     <div className={styles.inputForm}>
                         <label  htmlFor="name">
@@ -36,8 +67,8 @@ class FormAddContact extends Component {
                             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                             required
-                            value={this.state.name}
-                            onChange={this.handleChange}
+                            value={name}
+                            onChange={handleChange}
                             className={styles.input}
                         />
                     </div>
@@ -51,8 +82,8 @@ class FormAddContact extends Component {
                             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                             required
-                            value={this.state.number}
-                            onChange={this.handleChange}
+                            value={number}
+                            onChange={handleChange}
                             className={styles.input}
                         />
                     </div>
@@ -61,7 +92,6 @@ class FormAddContact extends Component {
            
             </form>
         );
-    }
+    
 }
 
-export default FormAddContact;
